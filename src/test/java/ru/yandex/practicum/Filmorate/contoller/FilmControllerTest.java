@@ -15,12 +15,11 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class FilmControllerTest {
-    private final String testText = "fdfdsdsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdfdsdsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdfdsdsffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -32,9 +31,9 @@ class FilmControllerTest {
 
         ResponseEntity<Film> response = restTemplate.postForEntity("/films", film, Film.class);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(response.getBody(), film);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(HttpStatus.OK).isEqualTo(response.getStatusCode());
+        assertThat(response.getBody()).isEqualTo(film);
     }
 
     @Test
@@ -44,12 +43,14 @@ class FilmControllerTest {
         Film film2 = createFilm();
         film2.setId(2L);
 
+
         restTemplate.postForEntity("/films", film1, Film.class);
         restTemplate.postForEntity("/films", film2, Film.class);
 
         ResponseEntity<Collection> response = restTemplate.getForEntity("/films", Collection.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("[{id=1, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H}, {id=2, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H}]", response.getBody().toString());
+
+        assertThat(HttpStatus.OK).isEqualTo(response.getStatusCode());
+        assertThat("[{id=1, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H}, {id=2, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H}]").isEqualTo(response.getBody().toString());
     }
 
     @ValueSource(strings = {"null", ""})
@@ -62,22 +63,20 @@ class FilmControllerTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
 
-        assertEquals("Название не может быть пустым.", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertThat("{\"name\":\"Название не может быть пустым.\"}").isEqualTo(response.getBody().toString());
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
     }
 
-    @ValueSource(strings = {"null", testText})
-    @ParameterizedTest
+    @Test
     @DisplayName("проверяем добавления, если описание больше 200 символов")
-    void badRequestCreateFilmWhenDescriptionInvalidTest(String description) {
+    void badRequestCreateFilmWhenDescriptionInvalidTest() {
         Film film = createFilm();
-        String desc = "null".equals(description) ? null : description;
-        film.setDescription(desc);
+        film.setDescription("fdfdsdsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdfdsdsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdfdsdsffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
         ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
 
-        assertEquals("Максимальная длина описания — 200 символов", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertThat("{\"description\":\"Максимальная длина описания — 200 символов\"}").isEqualTo(response.getBody().toString());
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
     }
 
     @Test
@@ -88,8 +87,8 @@ class FilmControllerTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
 
-        assertEquals("Дата релиза — не раньше 28 декабря 1895 года", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertThat("Дата релиза — не раньше 28 декабря 1895 года").isEqualTo(response.getBody());
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
     }
 
     @Test
@@ -100,8 +99,8 @@ class FilmControllerTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
 
-        assertEquals("Продолжительность фильма должна быть положительным числом", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertThat("Продолжительность фильма должна быть положительным числом").isEqualTo(response.getBody());
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
     }
 
     private Film createFilm() {

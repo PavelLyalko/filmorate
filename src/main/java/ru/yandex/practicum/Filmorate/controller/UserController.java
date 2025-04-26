@@ -24,18 +24,15 @@ public class UserController {
     @PostMapping
     public User create(@RequestBody User user) {
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
-            log.error("Электронная почта не может быть пустой и должна содержать символ '@'. User: {}", user);
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ '@'.");
         }
         if (user.getLogin() == null || user.getLogin().contains(" ") || user.getLogin().isEmpty()) {
-            log.error("Логин не может быть пустым и содержать пробелы. User: {}", user);
             throw new ValidationException("Логин не может быть пустым и содержать пробелы.");
         }
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения не может быть в будущем. User: {}", user);
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
         users.put(user.getId(), user);

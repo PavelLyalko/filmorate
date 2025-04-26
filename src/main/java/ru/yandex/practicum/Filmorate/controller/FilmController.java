@@ -1,5 +1,6 @@
 package ru.yandex.practicum.Filmorate.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.Filmorate.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,21 +25,17 @@ public class FilmController {
     private Map<Long, Film> films = new HashMap<>();
 
     @PostMapping
-    public ResponseEntity<Film> create(@RequestBody Film film) {
-        if (film.getName() == null || film.getName().isEmpty()) {
-            log.error("Название не может быть пустым. Film: {}", film);
-            throw new ValidationException("Название не может быть пустым.");
-        }
-        if (film.getDescription() == null || film.getDescription().length() > 200 || film.getDescription().isEmpty()) {
-            log.error("Максимальная длина описания — 200 символов. Film: {}", film);
-            throw new ValidationException("Максимальная длина описания — 200 символов");
-        }
+    public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
+//        if (film.getName().isEmpty()) {
+//            throw new ValidationException("Название не может быть пустым.");
+//        }
+//        if (film.getDescription().length() > 200 || film.getDescription().isEmpty()) {
+//            throw new ValidationException("Максимальная длина описания — 200 символов");
+//        }
         if (film.getReleaseDate().isBefore(LocalDate.of(1985, 12, 28))) {
-            log.error("Дата релиза — не раньше 28 декабря 1895 года. Film: {}", film);
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
         if (film.getDuration().isNegative()) {
-            log.error("Продолжительность фильма должна быть положительным числом. Film: {}", film);
             throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }
         films.put(film.getId(), film);
@@ -47,7 +44,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody Film updateFilm) {
+    public Film update(@Valid @RequestBody Film updateFilm) {
         Film film = films.get(updateFilm.getId());
         if (updateFilm.getDescription() != null) {
             film.setDescription(updateFilm.getDescription());

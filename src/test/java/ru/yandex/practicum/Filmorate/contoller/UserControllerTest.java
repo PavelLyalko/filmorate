@@ -14,8 +14,7 @@ import ru.yandex.practicum.Filmorate.model.User;
 import java.time.LocalDate;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTest {
@@ -30,9 +29,9 @@ class UserControllerTest {
 
         ResponseEntity<User> response = restTemplate.postForEntity("/users", user, User.class);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(response.getBody(), user);
+        assertThat(HttpStatus.OK).isEqualTo(response.getStatusCode());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).isEqualTo(user);
     }
 
     @Test
@@ -46,8 +45,8 @@ class UserControllerTest {
         restTemplate.postForEntity("/users", user2, User.class);
         ResponseEntity<Collection> response = restTemplate.getForEntity("/users", Collection.class);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("[{id=1, email=test@example.com, login=testLogin, name=testName, birthday=1990-01-01}, {id=2, email=test@example.com, login=testLogin, name=testName, birthday=1990-01-01}]", response.getBody().toString());
+        assertThat(HttpStatus.OK).isEqualTo(response.getStatusCode());
+        assertThat("[{id=1, email=test@example.com, login=testLogin, name=testName, birthday=1990-01-01}, {id=2, email=test@example.com, login=testLogin, name=testName, birthday=1990-01-01}]").isEqualTo(response.getBody().toString());
     }
 
     @CsvSource({"example.com", "null"})
@@ -59,8 +58,8 @@ class UserControllerTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/users", user, String.class);
 
-        assertEquals("Электронная почта не может быть пустой и должна содержать символ '@'.", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertThat("Электронная почта не может быть пустой и должна содержать символ '@'.").isEqualTo(response.getBody());
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
     }
 
     @CsvSource({"null", "gf gfg",})
@@ -73,8 +72,8 @@ class UserControllerTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/users", user, String.class);
 
-        assertEquals("Логин не может быть пустым и содержать пробелы.", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertThat("Логин не может быть пустым и содержать пробелы.").isEqualTo(response.getBody());
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
     }
 
 
@@ -86,8 +85,8 @@ class UserControllerTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/users", user, String.class);
 
-        assertEquals("Дата рождения не может быть в будущем", response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertThat("Дата рождения не может быть в будущем").isEqualTo(response.getBody());
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
     }
 
     private User createUser() {
