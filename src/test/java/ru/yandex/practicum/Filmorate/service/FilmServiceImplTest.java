@@ -11,32 +11,11 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FilmServiceImplTest extends FilmorateTests {
     @BeforeEach
     void setUp() {
         filmStorage.getFilms().clear();
-    }
-
-    @Test
-    @DisplayName("Проверка добавление лайка.")
-    void putLike() {
-        Film film = createFilm();
-        filmStorage.create(film);
-        filmService.putLike(1L, 100L);
-        assertTrue(film.getFilmLikes().contains(100L));
-    }
-
-    @Test
-    @DisplayName("Проверка удаления лайка.")
-    void deleteLike() {
-        Film film = createFilm();
-        filmStorage.create(film);
-        film.getFilmLikes().add(100L);
-        filmService.deleteLike(1L, 100L);
-        assertFalse(film.getFilmLikes().contains(100L));
     }
 
     @Test

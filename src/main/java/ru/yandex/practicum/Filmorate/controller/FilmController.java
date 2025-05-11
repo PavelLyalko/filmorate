@@ -1,8 +1,7 @@
 package ru.yandex.practicum.Filmorate.controller;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -10,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.yandex.practicum.Filmorate.exception.ValidationException;
 import ru.yandex.practicum.Filmorate.model.Film;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,21 +20,26 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.Filmorate.service.FilmService;
 import ru.yandex.practicum.Filmorate.storage.FilmStorage;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    @Autowired
-    private FilmStorage filmStorage;
-    @Autowired
-    private FilmService filmService;
+    private final FilmStorage filmStorage;
+    private final FilmService filmService;
 
     @PostMapping
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1985, 12, 28))) {
+            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
+        }
+        if (film.getDuration().isNegative()) {
+            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
+        }
         filmStorage.create(film);
         log.debug("Фильм с id {} успешно добавлен.", film.getId());
 
@@ -65,19 +70,22 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public ResponseEntity<String> likedFilms(@PathVariable String id, @PathVariable String userId) {
         log.debug("Пользователь с Id {}, ставит лайк фильму с Id {}", id, userId);
-        filmService.putLike(Long.parseLong(id), Long.parseLong(userId));
+        filmStorage.getFilm(id).putLike(Long.parseLong(userId));
         return new ResponseEntity<>("Лайк успешно поставлен", HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<String> deleteLike(@PathVariable String id, @PathVariable String userId) {
         log.debug("Пользователь с Id {}, удалил лайк у фильма с Id {}", id, userId);
-        filmService.deleteLike(Long.parseLong(id), Long.parseLong(userId));
+        filmStorage.getFilm(id).deleteLike(Long.parseLong(userId));
         return new ResponseEntity<>("Лайк успешно удален.", HttpStatus.OK);
     }
 
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(required = false) String count) {
+        if (count == null) {
+            count = "10";
+        }
         log.debug("Получение популярных фильмов");
         return filmService.getPopularFilms(count);
     }

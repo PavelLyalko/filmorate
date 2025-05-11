@@ -1,8 +1,7 @@
 package ru.yandex.practicum.Filmorate.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,15 +19,13 @@ import ru.yandex.practicum.Filmorate.storage.UserStorage;
 import java.util.Collection;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @Autowired
-    private UserStorage userStorage;
-    @Autowired
-    private UserService userService;
+    private final UserStorage userStorage;
+    private final UserService userService;
 
     @PostMapping
     public User create(@RequestBody User user) {

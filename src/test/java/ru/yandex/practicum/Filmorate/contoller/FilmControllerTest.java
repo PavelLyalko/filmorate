@@ -20,8 +20,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FilmControllerTest extends FilmorateTests {
 
@@ -109,8 +107,8 @@ class FilmControllerTest extends FilmorateTests {
         Film film = createFilm();
         filmStorage.create(film);
         ResponseEntity<String> response = restTemplate.getForEntity("/films/1", String.class);
-        assertNotNull(response);
-        assertEquals("{\"id\":1,\"name\":\"testName\",\"description\":\"тестофый фильм\",\"releaseDate\":\"1991-02-01\",\"duration\":\"PT2H\",\"filmLikes\":[]}", response.getBody());
+        assertThat(response).isNotNull();
+        assertThat("{\"id\":1,\"name\":\"testName\",\"description\":\"тестофый фильм\",\"releaseDate\":\"1991-02-01\",\"duration\":\"PT2H\",\"filmLikes\":[]}").isEqualTo(response.getBody());
     }
 
     @Test
@@ -127,8 +125,8 @@ class FilmControllerTest extends FilmorateTests {
         );
         Film updatedFilm = filmStorage.getFilm("1");
 
-        assertEquals("Лайк успешно поставлен", response.getBody());
-        assertTrue(updatedFilm.getFilmLikes().contains(1L));
+        assertThat("Лайк успешно поставлен").isEqualTo(response.getBody());
+        assertThat(updatedFilm.getFilmLikes().contains(1L)).isTrue();
     }
 
     @Test
@@ -177,9 +175,29 @@ class FilmControllerTest extends FilmorateTests {
 
         List<Film> popularFilm = response.getBody();
         assertEquals(3, popularFilm.size());
-        System.out.println(popularFilm.get(0));
-        System.out.println(popularFilm.get(1));
         assertEquals(3, popularFilm.get(0).getFilmLikes().size());
+    }
+
+    @Test
+    @DisplayName("Проверка создания фильма если дата релиза невалидна.")
+    void createFilmWithInvalidReleaseDate() {
+        Film film = createFilm();
+        film.setReleaseDate(LocalDate.of(1895, 1, 1));
+
+        ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
+
+        assertEquals("Дата релиза — не раньше 28 декабря 1895 года", response.getBody());
+    }
+
+    @Test
+    @DisplayName("Проверка создания фильма если продолжительность отрицательная.")
+    void createFilmWithNegativeDuration() {
+        Film film = createFilm();
+        film.setDuration(Duration.ofMinutes(-120));
+
+        ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
+
+        assertEquals("Продолжительность фильма должна быть положительным числом", response.getBody());
     }
 
 }

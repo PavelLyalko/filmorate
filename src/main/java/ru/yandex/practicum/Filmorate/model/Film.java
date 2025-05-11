@@ -18,4 +18,12 @@ public class Film {
     private LocalDate releaseDate;
     private Duration duration;
     private Set<Long> filmLikes;
+
+    public void putLike(Long userId) {
+        this.filmLikes.add(userId);
+    }
+
+    public void deleteLike(Long userId) {
+        this.filmLikes.remove(userId);
+    }
 }

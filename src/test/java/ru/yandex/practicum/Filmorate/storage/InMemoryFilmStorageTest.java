@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.Filmorate.FilmorateTests;
 import ru.yandex.practicum.Filmorate.exception.NotFoundException;
-import ru.yandex.practicum.Filmorate.exception.ValidationException;
 import ru.yandex.practicum.Filmorate.model.Film;
 
 import java.time.Duration;
@@ -16,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InMemoryFilmStorageTest extends FilmorateTests {
 
@@ -24,24 +24,6 @@ class InMemoryFilmStorageTest extends FilmorateTests {
     void createFilmWithValidData() {
         Film film = createFilm();
         assertDoesNotThrow(() -> filmStorage.create(film));
-    }
-
-    @Test
-    @DisplayName("Проверка создания фильма если дата релиза невалидна.")
-    void createFilmWithInvalidReleaseDate() {
-        Film film = createFilm();
-        film.setReleaseDate(LocalDate.of(1895, 1, 1));
-        ValidationException exception = assertThrows(ValidationException.class, () -> filmStorage.create(film));
-        assertEquals("Дата релиза — не раньше 28 декабря 1895 года", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("Проверка создания фильма если продолжительность отрицательная.")
-    void createFilmWithNegativeDuration() {
-        Film film = createFilm();
-        film.setDuration(Duration.ofMinutes(-120));
-        ValidationException exception = assertThrows(ValidationException.class, () -> filmStorage.create(film));
-        assertEquals("Продолжительность фильма должна быть положительным числом", exception.getMessage());
     }
 
     @Test
@@ -84,5 +66,24 @@ class InMemoryFilmStorageTest extends FilmorateTests {
     void getFilmByNonExistentId() {
         NotFoundException exception = assertThrows(NotFoundException.class, () -> filmStorage.getFilm("50"));
         assertEquals("Фильм с id 50 не найден.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Проверка добавление лайка.")
+    void putLike() {
+        Film film = createFilm();
+        filmStorage.create(film);
+        filmStorage.getFilm(film.getId().toString()).putLike(100L);
+        assertTrue(film.getFilmLikes().contains(100L));
+    }
+
+    @Test
+    @DisplayName("Проверка удаления лайка.")
+    void deleteLike() {
+        Film film = createFilm();
+        filmStorage.create(film);
+        film.getFilmLikes().add(100L);
+        filmStorage.getFilm(film.getId().toString()).deleteLike(100L);
+        assertFalse(film.getFilmLikes().contains(100L));
     }
 }
