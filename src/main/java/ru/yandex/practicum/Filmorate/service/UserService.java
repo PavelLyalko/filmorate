@@ -5,11 +5,13 @@ import ru.yandex.practicum.Filmorate.model.User;
 import java.util.List;
 
 public interface UserService {
-    void addFriend(Long user1Id, Long user2Id);
+    void addFriend(Long fromUserId, Long toUserId);
 
-    void deleteFriend(Long user1Id, Long user2Id);
+    void deleteFriend(Long fromUserId, Long toUserId);
+
+    User getUser(Long id);
 
     List<User> getAllFriends(Long id);
 
-    List<User> getEachFriendList(Long user1Id, Long user2Id);
+    List<User> getEachFriendList(Long fromUserId, Long toUserId);
 }

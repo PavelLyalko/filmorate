@@ -64,29 +64,26 @@ public class FilmController {
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable String id) {
         log.debug("Получения фильма по Id: {}", id);
-        return filmStorage.getFilm(id);
+        return filmService.getFilm(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public ResponseEntity<String> likedFilms(@PathVariable String id, @PathVariable String userId) {
         log.debug("Пользователь с Id {}, ставит лайк фильму с Id {}", id, userId);
-        filmStorage.getFilm(id).putLike(Long.parseLong(userId));
+        filmStorage.getFilm(id).get().putLike(Long.parseLong(userId));
         return new ResponseEntity<>("Лайк успешно поставлен", HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<String> deleteLike(@PathVariable String id, @PathVariable String userId) {
         log.debug("Пользователь с Id {}, удалил лайк у фильма с Id {}", id, userId);
-        filmStorage.getFilm(id).deleteLike(Long.parseLong(userId));
+        filmStorage.getFilm(id).get().deleteLike(Long.parseLong(userId));
         return new ResponseEntity<>("Лайк успешно удален.", HttpStatus.OK);
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(required = false) String count) {
-        if (count == null) {
-            count = "10";
-        }
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count) {
         log.debug("Получение популярных фильмов");
-        return filmService.getPopularFilms(count);
+        return filmService.getPopularFilms(Integer.parseInt(count));
     }
 }

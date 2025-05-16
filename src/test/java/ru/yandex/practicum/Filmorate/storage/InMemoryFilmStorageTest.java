@@ -3,7 +3,6 @@ package ru.yandex.practicum.Filmorate.storage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.Filmorate.FilmorateTests;
-import ru.yandex.practicum.Filmorate.exception.NotFoundException;
 import ru.yandex.practicum.Filmorate.model.Film;
 
 import java.time.Duration;
@@ -14,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InMemoryFilmStorageTest extends FilmorateTests {
@@ -39,7 +37,7 @@ class InMemoryFilmStorageTest extends FilmorateTests {
         updatedFilm.setDuration(Duration.ofMinutes(130));
 
         assertDoesNotThrow(() -> filmStorage.update(updatedFilm));
-        assertEquals("Updated Film", filmStorage.getFilm("1").getName());
+        assertEquals("Updated Film", filmStorage.getFilm("1").get().getName());
     }
 
     @Test
@@ -56,16 +54,9 @@ class InMemoryFilmStorageTest extends FilmorateTests {
     void getFilmById() {
         Film film = createFilm();
         filmStorage.create(film);
-        Film retrievedFilm = filmStorage.getFilm("1");
+        Film retrievedFilm = filmStorage.getFilm("1").get();
         assertNotNull(retrievedFilm);
         assertEquals("testName", retrievedFilm.getName());
-    }
-
-    @Test
-    @DisplayName("Проверка получения не существующего фильма по Id.")
-    void getFilmByNonExistentId() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> filmStorage.getFilm("50"));
-        assertEquals("Фильм с id 50 не найден.", exception.getMessage());
     }
 
     @Test
@@ -73,7 +64,7 @@ class InMemoryFilmStorageTest extends FilmorateTests {
     void putLike() {
         Film film = createFilm();
         filmStorage.create(film);
-        filmStorage.getFilm(film.getId().toString()).putLike(100L);
+        filmStorage.getFilm(film.getId().toString()).get().putLike(100L);
         assertTrue(film.getFilmLikes().contains(100L));
     }
 
@@ -83,7 +74,7 @@ class InMemoryFilmStorageTest extends FilmorateTests {
         Film film = createFilm();
         filmStorage.create(film);
         film.getFilmLikes().add(100L);
-        filmStorage.getFilm(film.getId().toString()).deleteLike(100L);
+        filmStorage.getFilm(film.getId().toString()).get().deleteLike(100L);
         assertFalse(film.getFilmLikes().contains(100L));
     }
 }

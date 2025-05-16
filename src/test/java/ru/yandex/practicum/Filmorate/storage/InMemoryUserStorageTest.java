@@ -74,7 +74,7 @@ class InMemoryUserStorageTest extends FilmorateTests {
         updatedUser.setBirthday(LocalDate.of(1991, 1, 1));
 
         assertDoesNotThrow(() -> userStorage.update(updatedUser));
-        assertEquals("updated@example.com", userStorage.getUser(1L).getEmail());
+        assertEquals("updated@example.com", userStorage.getUser(1L).get().getEmail());
     }
 
     @Test
@@ -91,7 +91,7 @@ class InMemoryUserStorageTest extends FilmorateTests {
     void getUserById() {
         User user = createUser();
         userStorage.create(user);
-        User retrievedUser = userStorage.getUser(1L);
+        User retrievedUser = userStorage.getUser(1L).get();
         assertNotNull(retrievedUser);
         assertEquals("test@example.com", retrievedUser.getEmail());
     }

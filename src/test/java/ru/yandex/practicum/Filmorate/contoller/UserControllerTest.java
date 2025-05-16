@@ -127,8 +127,8 @@ class UserControllerTest extends FilmorateTests {
         );
 
         assertEquals("Новый друг успешно добавлен", response.getBody());
-        assertTrue(userStorage.getUser(user1.getId()).getFriends().contains(user2.getId()));
-        assertTrue(userStorage.getUser(user2.getId()).getFriends().contains(user1.getId()));
+        assertTrue(userStorage.getUser(user1.getId()).get().getFriends().contains(user2.getId()));
+        assertTrue(userStorage.getUser(user2.getId()).get().getFriends().contains(user1.getId()));
     }
 
     @Test
@@ -150,8 +150,8 @@ class UserControllerTest extends FilmorateTests {
         );
 
         assertEquals("Друг успешно удален", response.getBody());
-        assertFalse(userStorage.getUser(user1.getId()).getFriends().contains(user2.getId()));
-        assertFalse(userStorage.getUser(user2.getId()).getFriends().contains(user1.getId()));
+        assertFalse(userStorage.getUser(user1.getId()).get().getFriends().contains(user2.getId()));
+        assertFalse(userStorage.getUser(user2.getId()).get().getFriends().contains(user1.getId()));
     }
 
     @Test

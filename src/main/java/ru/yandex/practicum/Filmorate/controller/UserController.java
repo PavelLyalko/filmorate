@@ -52,7 +52,7 @@ public class UserController {
     @GetMapping("/{id}")
     public User getUser(@PathVariable String id) {
         log.debug("получения пользователя по Id: {}", id);
-        return userStorage.getUser(Long.parseLong(id));
+        return userService.getUser(Long.parseLong(id));
     }
 
     @PutMapping("/{id}/friends/{friendId}")

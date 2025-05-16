@@ -123,7 +123,7 @@ class FilmControllerTest extends FilmorateTests {
                 null,
                 String.class
         );
-        Film updatedFilm = filmStorage.getFilm("1");
+        Film updatedFilm = filmStorage.getFilm("1").get();
 
         assertThat("Лайк успешно поставлен").isEqualTo(response.getBody());
         assertThat(updatedFilm.getFilmLikes().contains(1L)).isTrue();
@@ -144,7 +144,7 @@ class FilmControllerTest extends FilmorateTests {
         );
 
         assertEquals("Лайк успешно удален.", response.getBody());
-        assertEquals(0, filmStorage.getFilm("1").getFilmLikes().size());
+        assertEquals(0, filmStorage.getFilm("1").get().getFilmLikes().size());
     }
 
     @Test
