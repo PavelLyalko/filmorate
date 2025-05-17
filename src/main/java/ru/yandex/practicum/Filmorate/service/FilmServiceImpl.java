@@ -6,9 +6,9 @@ import ru.yandex.practicum.Filmorate.exception.NotFoundException;
 import ru.yandex.practicum.Filmorate.model.Film;
 import ru.yandex.practicum.Filmorate.storage.FilmStorage;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -23,11 +23,34 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film getFilm(String id) {
-        Optional<Film> film = filmStorage.getFilm(id);
-        if (film.isEmpty()) {
-            throw new NotFoundException("Фильм с id " + id + " не найден.");
-        }
-        return film.get();
+    public Film getFilm(Long id) {
+        return filmStorage.getFilm(id).orElseThrow(() -> new NotFoundException("Фильм с id " + id + " не найден."));
+    }
+
+    @Override
+    public void create(Film film) {
+        filmStorage.create(film);
+    }
+
+    @Override
+    public void update(Film updateFilm) {
+        filmStorage.update(updateFilm);
+    }
+
+    @Override
+    public Collection<Film> getFilms() {
+        return filmStorage.getFilms();
+    }
+
+    @Override
+    public void likedFilms(Long id, Long userId) {
+        Film film = getFilm(id);
+        film.putLike(userId);
+    }
+
+    @Override
+    public void deleteLike(Long id, Long userId) {
+        Film film = getFilm(id);
+        film.deleteLike(userId);
     }
 }

@@ -9,11 +9,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class InMemoryFilmStorageTest extends FilmorateTests {
 
@@ -21,7 +18,8 @@ class InMemoryFilmStorageTest extends FilmorateTests {
     @DisplayName("Проверка коректного создания фильма.")
     void createFilmWithValidData() {
         Film film = createFilm();
-        assertDoesNotThrow(() -> filmStorage.create(film));
+
+        assertThatNoException().isThrownBy(() -> filmStorage.create(film));
     }
 
     @Test
@@ -36,8 +34,8 @@ class InMemoryFilmStorageTest extends FilmorateTests {
         updatedFilm.setReleaseDate(LocalDate.of(2001, 1, 1));
         updatedFilm.setDuration(Duration.ofMinutes(130));
 
-        assertDoesNotThrow(() -> filmStorage.update(updatedFilm));
-        assertEquals("Updated Film", filmStorage.getFilm("1").get().getName());
+        assertThatNoException().isThrownBy(() -> filmStorage.update(updatedFilm));
+        assertThat(filmStorage.getFilm(1L).get().getName()).isEqualTo("Updated Film");
     }
 
     @Test
@@ -46,7 +44,8 @@ class InMemoryFilmStorageTest extends FilmorateTests {
         Film film = createFilm();
         filmStorage.create(film);
         Collection<Film> films = filmStorage.getFilms();
-        assertFalse(films.isEmpty());
+
+        assertThat(films).isNotEmpty();
     }
 
     @Test
@@ -54,9 +53,10 @@ class InMemoryFilmStorageTest extends FilmorateTests {
     void getFilmById() {
         Film film = createFilm();
         filmStorage.create(film);
-        Film retrievedFilm = filmStorage.getFilm("1").get();
-        assertNotNull(retrievedFilm);
-        assertEquals("testName", retrievedFilm.getName());
+        Film retrievedFilm = filmStorage.getFilm(1L).get();
+
+        assertThat(retrievedFilm).isNotNull();
+        assertThat(retrievedFilm.getName()).isEqualTo("testName");
     }
 
     @Test
@@ -64,8 +64,9 @@ class InMemoryFilmStorageTest extends FilmorateTests {
     void putLike() {
         Film film = createFilm();
         filmStorage.create(film);
-        filmStorage.getFilm(film.getId().toString()).get().putLike(100L);
-        assertTrue(film.getFilmLikes().contains(100L));
+        filmStorage.getFilm(film.getId()).get().putLike(100L);
+
+        assertThat(film.getFilmLikes()).contains(100L);
     }
 
     @Test
@@ -74,7 +75,8 @@ class InMemoryFilmStorageTest extends FilmorateTests {
         Film film = createFilm();
         filmStorage.create(film);
         film.getFilmLikes().add(100L);
-        filmStorage.getFilm(film.getId().toString()).get().deleteLike(100L);
-        assertFalse(film.getFilmLikes().contains(100L));
+        filmStorage.getFilm(film.getId()).get().deleteLike(100L);
+
+        assertThat(film.getFilmLikes()).doesNotContain(100L);
     }
 }

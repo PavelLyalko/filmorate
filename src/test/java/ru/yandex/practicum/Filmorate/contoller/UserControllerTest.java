@@ -18,10 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserControllerTest extends FilmorateTests {
 
@@ -106,8 +102,8 @@ class UserControllerTest extends FilmorateTests {
                 User.class
         );
 
-        assertNotNull(response);
-        assertEquals("Новый user1", response.getBody().getName());
+        assertThat(response).isNotNull();
+        assertThat("Новый user1").isEqualTo(response.getBody().getName());
     }
 
     @Test
@@ -126,9 +122,9 @@ class UserControllerTest extends FilmorateTests {
                 String.class
         );
 
-        assertEquals("Новый друг успешно добавлен", response.getBody());
-        assertTrue(userStorage.getUser(user1.getId()).get().getFriends().contains(user2.getId()));
-        assertTrue(userStorage.getUser(user2.getId()).get().getFriends().contains(user1.getId()));
+        assertThat("Новый друг успешно добавлен").isEqualTo(response.getBody());
+        assertThat(userStorage.getUser(user1.getId()).get().getFriends().contains(user2.getId())).isTrue();
+        assertThat(userStorage.getUser(user2.getId()).get().getFriends().contains(user1.getId())).isTrue();
     }
 
     @Test
@@ -149,9 +145,9 @@ class UserControllerTest extends FilmorateTests {
                 String.class
         );
 
-        assertEquals("Друг успешно удален", response.getBody());
-        assertFalse(userStorage.getUser(user1.getId()).get().getFriends().contains(user2.getId()));
-        assertFalse(userStorage.getUser(user2.getId()).get().getFriends().contains(user1.getId()));
+        assertThat("Друг успешно удален").isEqualTo(response.getBody());
+        assertThat(userStorage.getUser(user1.getId()).get().getFriends().contains(user2.getId())).isFalse();
+        assertThat(userStorage.getUser(user2.getId()).get().getFriends().contains(user1.getId())).isFalse();
     }
 
     @Test
@@ -177,9 +173,9 @@ class UserControllerTest extends FilmorateTests {
                 }
         );
 
-        assertEquals(2, response.getBody().size());
-        assertEquals(2L, response.getBody().get(0).getId());
-        assertEquals(3L, response.getBody().get(1).getId());
+        assertThat(2).isEqualTo(response.getBody().size());
+        assertThat(2L).isEqualTo(response.getBody().get(0).getId());
+        assertThat(3L).isEqualTo(response.getBody().get(1).getId());
     }
 
     @Test
@@ -205,8 +201,7 @@ class UserControllerTest extends FilmorateTests {
                 }
         );
 
-        assertEquals(1, response.getBody().size());
-        assertEquals(2L, response.getBody().get(0).getId());
+        assertThat(1).isEqualTo(response.getBody().size());
+        assertThat(2L).isEqualTo(response.getBody().get(0).getId());
     }
-
 }

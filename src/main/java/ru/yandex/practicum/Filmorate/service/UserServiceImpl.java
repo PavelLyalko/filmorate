@@ -8,7 +8,6 @@ import ru.yandex.practicum.Filmorate.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,23 +18,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addFriend(Long fromUserId, Long toUserId) {
-        userStorage.getUser(fromUserId).get().addFriend(toUserId);
-        userStorage.getUser(toUserId).get().addFriend(fromUserId);
+        User fromUser = getUser(fromUserId);
+        User toUser = getUser(toUserId);
+        fromUser.addFriend(toUserId);
+        toUser.addFriend(fromUserId);
     }
 
     @Override
     public void deleteFriend(Long fromUserId, Long toUserId) {
-        userStorage.getUser(fromUserId).get().deleteFriend(toUserId);
-        userStorage.getUser(toUserId).get().deleteFriend(fromUserId);
+        User fromUser = getUser(fromUserId);
+        User toUser = getUser(toUserId);
+        fromUser.deleteFriend(toUserId);
+        toUser.deleteFriend(fromUserId);
     }
 
     @Override
     public User getUser(Long id) {
-        Optional<User> user = userStorage.getUser(id);
-        if (user.isEmpty()){
-            throw new NotFoundException("Не найден пользователь с Id: " + id);
-        }
-        return user.get();
+        return userStorage.getUser(id).orElseThrow(() -> new NotFoundException("Не найден пользователь с Id: " + id));
     }
 
     @Override
@@ -59,5 +58,23 @@ public class UserServiceImpl implements UserService {
                 .filter(toUserFriend::contains)
                 .map(user -> userStorage.getUser(user).get())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void create(User user) {
+        if (user.getName() == null || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
+        userStorage.create(user);
+    }
+
+    @Override
+    public void update(User updateUser) {
+        userStorage.update(updateUser);
+    }
+
+    @Override
+    public Collection<User> getUsers() {
+        return userStorage.getUsers();
     }
 }

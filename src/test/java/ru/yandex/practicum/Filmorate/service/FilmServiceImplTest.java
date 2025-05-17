@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 class FilmServiceImplTest extends FilmorateTests {
     @BeforeEach
@@ -34,9 +34,9 @@ class FilmServiceImplTest extends FilmorateTests {
         filmStorage.create(film2);
 
         List<Film> popularFilms = filmService.getPopularFilms(10);
-        System.out.println(popularFilms);
-        assertEquals(2, popularFilms.size());
-        assertEquals(2, popularFilms.get(0).getFilmLikes().size());
+
+        assertThat(2).isEqualTo(popularFilms.size());
+        assertThat(2).isEqualTo(popularFilms.get(0).getFilmLikes().size());
     }
 
     @Test
@@ -53,14 +53,16 @@ class FilmServiceImplTest extends FilmorateTests {
         filmStorage.create(film2);
 
         List<Film> popularFilms = filmService.getPopularFilms(1);
-        assertEquals(1, popularFilms.size());
-        assertEquals(2, popularFilms.get(0).getFilmLikes().size());
+
+        assertThat(1).isEqualTo(popularFilms.size());
+        assertThat(2).isEqualTo(popularFilms.get(0).getFilmLikes().size());
     }
 
     @Test
     @DisplayName("Проверка получения не существующего фильма по Id.")
     void getFilmByNonExistentId() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> filmService.getFilm("50"));
-        assertEquals("Фильм с id 50 не найден.", exception.getMessage());
+        assertThatExceptionOfType(NotFoundException.class)
+                .isThrownBy(() -> filmService.getFilm(50L))
+                .withMessage("Фильм с id 50 не найден.");
     }
 }

@@ -12,6 +12,6 @@ public interface FilmStorage {
 
     Collection<Film> getFilms();
 
-    Optional<Film> getFilm(String id);
+    Optional<Film> getFilm(Long id);
 }
 

@@ -40,10 +40,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Optional<Film> getFilm(String id) {
-        if (!films.containsKey(Long.parseLong(id))) {
+    public Optional<Film> getFilm(Long id) {
+        if (!films.containsKey(id)) {
             return Optional.empty();
         }
-        return Optional.of(films.get(Long.parseLong(id)));
+        return Optional.of(films.get(id));
     }
 }

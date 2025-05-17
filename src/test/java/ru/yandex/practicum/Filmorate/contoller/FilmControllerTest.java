@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FilmControllerTest extends FilmorateTests {
 
@@ -123,7 +122,7 @@ class FilmControllerTest extends FilmorateTests {
                 null,
                 String.class
         );
-        Film updatedFilm = filmStorage.getFilm("1").get();
+        Film updatedFilm = filmStorage.getFilm(1L).get();
 
         assertThat("Лайк успешно поставлен").isEqualTo(response.getBody());
         assertThat(updatedFilm.getFilmLikes().contains(1L)).isTrue();
@@ -143,8 +142,8 @@ class FilmControllerTest extends FilmorateTests {
                 String.class
         );
 
-        assertEquals("Лайк успешно удален.", response.getBody());
-        assertEquals(0, filmStorage.getFilm("1").get().getFilmLikes().size());
+        assertThat("Лайк успешно удален.").isEqualTo(response.getBody());
+        assertThat(0).isEqualTo(filmStorage.getFilm(1L).get().getFilmLikes().size());
     }
 
     @Test
@@ -171,11 +170,10 @@ class FilmControllerTest extends FilmorateTests {
                 new ParameterizedTypeReference<>() {
                 }
         );
-
-
         List<Film> popularFilm = response.getBody();
-        assertEquals(3, popularFilm.size());
-        assertEquals(3, popularFilm.get(0).getFilmLikes().size());
+
+        assertThat(3).isEqualTo(popularFilm.size());
+        assertThat(3).isEqualTo(popularFilm.get(0).getFilmLikes().size());
     }
 
     @Test
@@ -186,7 +184,7 @@ class FilmControllerTest extends FilmorateTests {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
 
-        assertEquals("Дата релиза — не раньше 28 декабря 1895 года", response.getBody());
+        assertThat("Дата релиза — не раньше 28 декабря 1895 года").isEqualTo(response.getBody());
     }
 
     @Test
@@ -197,7 +195,7 @@ class FilmControllerTest extends FilmorateTests {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
 
-        assertEquals("Продолжительность фильма должна быть положительным числом", response.getBody());
+        assertThat("Продолжительность фильма должна быть положительным числом").isEqualTo(response.getBody());
     }
 
 }

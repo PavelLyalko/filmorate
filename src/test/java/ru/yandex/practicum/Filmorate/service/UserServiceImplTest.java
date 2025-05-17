@@ -7,7 +7,7 @@ import ru.yandex.practicum.Filmorate.model.User;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class UserServiceImplTest extends FilmorateTests {
     @Test
@@ -22,8 +22,9 @@ class UserServiceImplTest extends FilmorateTests {
         userStorage.create(user2);
 
         List<User> friends = userService.getAllFriends(user1.getId());
-        assertEquals(1, friends.size());
-        assertEquals(user2.getId(), friends.get(0).getId());
+
+        assertThat(1).isEqualTo(friends.size());
+        assertThat(user2.getId()).isEqualTo(friends.get(0).getId());
     }
 
     @Test
@@ -43,7 +44,8 @@ class UserServiceImplTest extends FilmorateTests {
         userStorage.create(user3);
 
         List<User> commonFriends = userService.getEachFriendList(user2.getId(), user3.getId());
-        assertEquals(1, commonFriends.size());
-        assertEquals(user1.getId(), commonFriends.get(0).getId());
+
+        assertThat(1).isEqualTo(commonFriends.size());
+        assertThat(user1.getId()).isEqualTo(commonFriends.get(0).getId());
     }
 }
