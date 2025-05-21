@@ -12,6 +12,7 @@ import ru.yandex.practicum.Filmorate.storage.UserStorage;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -46,7 +47,7 @@ public class FilmorateTests {
         user.setLogin("testLogin");
         user.setName("testName");
         user.setBirthday(LocalDate.of(1990, 1, 1));
-        user.setFriends(new HashSet<>());
+        user.setFriends(new HashMap<>());
 
         return user;
     }

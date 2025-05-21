@@ -18,6 +18,8 @@ public class Film {
     private LocalDate releaseDate;
     private Duration duration;
     private Set<Long> filmLikes;
+    private Set<String> rate;
+    private String rating;
 
     public void putLike(Long userId) {
         this.filmLikes.add(userId);
