@@ -1,9 +1,10 @@
 package ru.yandex.practicum.Filmorate.model;
 
 import lombok.Data;
+import ru.yandex.practicum.Filmorate.model.enums.FriendStatus;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.Map;
 
 @Data
 public class User {
@@ -12,10 +13,10 @@ public class User {
     private String login;
     private String name;
     private LocalDate birthday;
-    private Set<Long> friends;
+    private Map<Long, FriendStatus> friends;
 
-    public void addFriend(Long id) {
-        this.friends.add(id);
+    public void addFriend(Long id, FriendStatus status) {
+        this.friends.put(id, status);
     }
 
     public void deleteFriend(Long id) {

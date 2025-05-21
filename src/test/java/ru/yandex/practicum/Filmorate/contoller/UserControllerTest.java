@@ -10,12 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.Filmorate.FilmorateTests;
 import ru.yandex.practicum.Filmorate.model.User;
+import ru.yandex.practicum.Filmorate.model.enums.FriendStatus;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +46,7 @@ class UserControllerTest extends FilmorateTests {
         ResponseEntity<Collection> response = restTemplate.getForEntity("/users", Collection.class);
 
         assertThat(HttpStatus.OK).isEqualTo(response.getStatusCode());
-        assertThat("[{id=1, email=test@example.com, login=testLogin, name=testName, birthday=1990-01-01, friends=[]}, {id=2, email=test@example.com, login=testLogin, name=testName, birthday=1990-01-01, friends=[]}]").isEqualTo(response.getBody().toString());
+        assertThat("[{id=1, email=test@example.com, login=testLogin, name=testName, birthday=1990-01-01, friends={}}, {id=2, email=test@example.com, login=testLogin, name=testName, birthday=1990-01-01, friends={}}]").isEqualTo(response.getBody().toString());
     }
 
     @CsvSource({"example.com", "null"})
@@ -107,7 +108,7 @@ class UserControllerTest extends FilmorateTests {
     }
 
     @Test
-    @DisplayName("Проверка добаления друзей.")
+    @DisplayName("Проверка добаления друзей, когда один пользователь отправил запрос на добавление другого пользователя в друзья.")
     void testAddUserInFriendList() {
         User user1 = createUser();
         User user2 = createUser();
@@ -123,17 +124,17 @@ class UserControllerTest extends FilmorateTests {
         );
 
         assertThat("Новый друг успешно добавлен").isEqualTo(response.getBody());
-        assertThat(userStorage.getUser(user1.getId()).get().getFriends().contains(user2.getId())).isTrue();
-        assertThat(userStorage.getUser(user2.getId()).get().getFriends().contains(user1.getId())).isTrue();
+        assertThat(userStorage.getUser(user1.getId()).get().getFriends().containsKey(user2.getId())).isTrue();
+        assertThat(userStorage.getUser(user1.getId()).get().getFriends().get(user2.getId())).isEqualTo(FriendStatus.UNCONFIRMED);
     }
 
     @Test
     @DisplayName("Проверка удаления из друзей.")
     void testRemoveUserFromFriendList() {
         User user1 = createUser();
-        user1.setFriends(new HashSet<>(Arrays.asList(2L)));
+        user1.setFriends(new HashMap<>(Map.of(2L, FriendStatus.CONFIRMED)));
         User user2 = createUser();
-        user2.setFriends(new HashSet<>(Arrays.asList(1L)));
+        user2.setFriends(new HashMap<>(Map.of(1L, FriendStatus.CONFIRMED)));
         user2.setId(2L);
         userStorage.create(user1);
         userStorage.create(user2);
@@ -146,8 +147,8 @@ class UserControllerTest extends FilmorateTests {
         );
 
         assertThat("Друг успешно удален").isEqualTo(response.getBody());
-        assertThat(userStorage.getUser(user1.getId()).get().getFriends().contains(user2.getId())).isFalse();
-        assertThat(userStorage.getUser(user2.getId()).get().getFriends().contains(user1.getId())).isFalse();
+        assertThat(userStorage.getUser(user1.getId()).get().getFriends().containsKey(user2.getId())).isFalse();
+        assertThat(userStorage.getUser(user2.getId()).get().getFriends().containsKey(user1.getId())).isFalse();
     }
 
     @Test
@@ -156,9 +157,9 @@ class UserControllerTest extends FilmorateTests {
         User user1 = createUser();
         User user2 = createUser();
         User user3 = createUser();
-        user1.setFriends(new HashSet<>(Arrays.asList(2L, 3L)));
-        user2.setFriends(new HashSet<>(Arrays.asList(1L)));
-        user3.setFriends(new HashSet<>(Arrays.asList(1L)));
+        user1.setFriends(new HashMap<>(Map.of(2L, FriendStatus.CONFIRMED, 3L, FriendStatus.CONFIRMED)));
+        user2.setFriends(new HashMap<>(Map.of(1L, FriendStatus.CONFIRMED)));
+        user3.setFriends(new HashMap<>(Map.of(1L, FriendStatus.CONFIRMED)));
         user2.setId(2L);
         user3.setId(3L);
         userStorage.create(user1);
@@ -184,9 +185,9 @@ class UserControllerTest extends FilmorateTests {
         User user1 = createUser();
         User user2 = createUser();
         User user3 = createUser();
-        user1.setFriends(new HashSet<>(Arrays.asList(2L)));
-        user2.setFriends(new HashSet<>(Arrays.asList(1L, 3L)));
-        user3.setFriends(new HashSet<>(Arrays.asList(2L)));
+        user1.setFriends(new HashMap<>(Map.of(2L, FriendStatus.CONFIRMED)));
+        user2.setFriends(new HashMap<>(Map.of(1L, FriendStatus.CONFIRMED, 3L, FriendStatus.CONFIRMED)));
+        user3.setFriends(new HashMap<>(Map.of(2L, FriendStatus.CONFIRMED)));
         user2.setId(2L);
         user3.setId(3L);
         userStorage.create(user1);
