@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class Film {
@@ -16,4 +17,13 @@ public class Film {
     private String description;
     private LocalDate releaseDate;
     private Duration duration;
+    private Set<Long> filmLikes;
+
+    public void putLike(Long userId) {
+        this.filmLikes.add(userId);
+    }
+
+    public void deleteLike(Long userId) {
+        this.filmLikes.remove(userId);
+    }
 }
