@@ -18,7 +18,7 @@ public class Film {
     private LocalDate releaseDate;
     private Duration duration;
     private Set<Long> filmLikes;
-    private Set<String> rate;
+    private Set<String> genre;
     private String rating;
 
     public void putLike(Long userId) {
