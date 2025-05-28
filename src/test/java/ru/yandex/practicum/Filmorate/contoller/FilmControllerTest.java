@@ -47,7 +47,7 @@ class FilmControllerTest extends FilmorateTests {
         ResponseEntity<Collection> response = restTemplate.getForEntity("/films", Collection.class);
 
         assertThat(HttpStatus.OK).isEqualTo(response.getStatusCode());
-        assertThat("[{id=1, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H, filmLikes=[]}, {id=2, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H, filmLikes=[]}, {id=3, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H, filmLikes=[]}]").isEqualTo(response.getBody().toString());
+        assertThat("[{id=1, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H, filmLikes=[], rate=null, rating=null}, {id=2, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H, filmLikes=[], rate=null, rating=null}, {id=3, name=testName, description=тестофый фильм, releaseDate=1991-02-01, duration=PT2H, filmLikes=[], rate=null, rating=null}]").isEqualTo(response.getBody().toString());
     }
 
     @ValueSource(strings = {"null", ""})
@@ -107,7 +107,7 @@ class FilmControllerTest extends FilmorateTests {
         filmStorage.create(film);
         ResponseEntity<String> response = restTemplate.getForEntity("/films/1", String.class);
         assertThat(response).isNotNull();
-        assertThat("{\"id\":1,\"name\":\"testName\",\"description\":\"тестофый фильм\",\"releaseDate\":\"1991-02-01\",\"duration\":\"PT2H\",\"filmLikes\":[]}").isEqualTo(response.getBody());
+        assertThat("{\"id\":1,\"name\":\"testName\",\"description\":\"тестофый фильм\",\"releaseDate\":\"1991-02-01\",\"duration\":\"PT2H\",\"filmLikes\":[],\"rate\":null,\"rating\":null}").isEqualTo(response.getBody());
     }
 
     @Test

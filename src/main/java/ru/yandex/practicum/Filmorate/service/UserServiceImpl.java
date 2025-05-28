@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.Filmorate.exception.NotFoundException;
 import ru.yandex.practicum.Filmorate.model.User;
+import ru.yandex.practicum.Filmorate.model.enums.FriendStatus;
 import ru.yandex.practicum.Filmorate.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,8 +22,15 @@ public class UserServiceImpl implements UserService {
     public void addFriend(Long fromUserId, Long toUserId) {
         User fromUser = getUser(fromUserId);
         User toUser = getUser(toUserId);
-        fromUser.addFriend(toUserId);
-        toUser.addFriend(fromUserId);
+        Map<Long, FriendStatus> toUserFriends = toUser.getFriends();
+        if (toUserFriends.containsKey(fromUserId)) {
+            if (toUserFriends.get(fromUserId) == FriendStatus.UNCONFIRMED) {
+                toUserFriends.put(fromUserId, FriendStatus.CONFIRMED);
+            }
+            fromUser.addFriend(toUserId, FriendStatus.CONFIRMED);
+        } else {
+            fromUser.addFriend(toUserId, FriendStatus.UNCONFIRMED);
+        }
     }
 
     @Override
@@ -39,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllFriends(Long id) {
-        Set<Long> friendIds = userStorage.getUser(id).get().getFriends();
+        Set<Long> friendIds = userStorage.getUser(id).get().getFriends().keySet();
         Collection<User> users = userStorage.getUsers();
 
         return users.stream()
@@ -51,8 +60,8 @@ public class UserServiceImpl implements UserService {
     public List<User> getEachFriendList(Long fromUserId, Long toUserId) {
         User fromUser = userStorage.getUser(fromUserId).get();
         User toUser = userStorage.getUser(toUserId).get();
-        Set<Long> fromUserFriend = fromUser.getFriends();
-        Set<Long> toUserFriend = toUser.getFriends();
+        Set<Long> fromUserFriend = fromUser.getFriends().keySet();
+        Set<Long> toUserFriend = toUser.getFriends().keySet();
 
         return fromUserFriend.stream()
                 .filter(toUserFriend::contains)
