@@ -92,7 +92,7 @@ class FilmControllerTest extends FilmorateTests {
     @DisplayName("проверяем добавления фильма, если продолжительность фильма отрицательное число")
     void badRequestCreateFilmWhenDurationInvalidTest() {
         Film film = createFilm();
-        film.setDuration(Duration.ofMinutes(-120));
+        film.setDuration(-120);
 
         ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
 
@@ -122,7 +122,7 @@ class FilmControllerTest extends FilmorateTests {
                 null,
                 String.class
         );
-        Film updatedFilm = filmStorage.getFilm(1L).get();
+        Film updatedFilm = filmStorage.getFilmById(1L).get();
 
         assertThat("Лайк успешно поставлен").isEqualTo(response.getBody());
         assertThat(updatedFilm.getFilmLikes().contains(1L)).isTrue();
@@ -143,7 +143,7 @@ class FilmControllerTest extends FilmorateTests {
         );
 
         assertThat("Лайк успешно удален.").isEqualTo(response.getBody());
-        assertThat(0).isEqualTo(filmStorage.getFilm(1L).get().getFilmLikes().size());
+        assertThat(0).isEqualTo(filmStorage.getFilmById(1L).get().getFilmLikes().size());
     }
 
     @Test
@@ -191,7 +191,7 @@ class FilmControllerTest extends FilmorateTests {
     @DisplayName("Проверка создания фильма если продолжительность отрицательная.")
     void createFilmWithNegativeDuration() {
         Film film = createFilm();
-        film.setDuration(Duration.ofMinutes(-120));
+        film.setDuration(-120);
 
         ResponseEntity<String> response = restTemplate.postForEntity("/films", film, String.class);
 

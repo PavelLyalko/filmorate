@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.Filmorate.FilmorateTests;
 import ru.yandex.practicum.Filmorate.model.User;
-import ru.yandex.practicum.Filmorate.model.enums.FriendStatus;
+
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -35,7 +35,7 @@ class InMemoryUserStorageTest extends FilmorateTests {
         updatedUser.setBirthday(LocalDate.of(1991, 1, 1));
 
         assertThatNoException().isThrownBy(() -> userStorage.update(updatedUser));
-        assertThat(userStorage.getUser(1L).get().getEmail()).isEqualTo("updated@example.com");
+        assertThat(userStorage.getUserById(1L).get().getEmail()).isEqualTo("updated@example.com");
     }
 
     @Test
@@ -50,10 +50,10 @@ class InMemoryUserStorageTest extends FilmorateTests {
 
     @Test
     @DisplayName("Проверка получения пользователя по id.")
-    void getUserById() {
+    void getUserByIdById() {
         User user = createUser();
         userStorage.create(user);
-        User retrievedUser = userStorage.getUser(1L).get();
+        User retrievedUser = userStorage.getUserById(1L).get();
 
         assertThat(retrievedUser).isNotNull();
         assertThat(retrievedUser.getEmail()).isEqualTo("test@example.com");
@@ -68,11 +68,11 @@ class InMemoryUserStorageTest extends FilmorateTests {
         userStorage.create(user1);
         userStorage.create(user2);
 
-        userService.addFriend(user1.getId(), user2.getId());
-        userService.addFriend(user2.getId(), user1.getId());
+        userService.sendFriendRequest(user1.getId(), user2.getId());
+        userService.sendFriendRequest(user2.getId(), user1.getId());
 
-        assertThat(user1.getFriends()).containsKey(user2.getId());
-        assertThat(user2.getFriends()).containsKey(user1.getId());
+        assertThat(user1.getFriends()).contains(user2.getId());
+        assertThat(user2.getFriends()).contains(user1.getId());
     }
 
     @Test
@@ -81,14 +81,18 @@ class InMemoryUserStorageTest extends FilmorateTests {
         User user1 = createUser();
         User user2 = createUser();
         user2.setId(2L);
-        user1.getFriends().put(user2.getId(), FriendStatus.CONFIRMED);
-        user2.getFriends().put(user1.getId(), FriendStatus.CONFIRMED);
+        user1.getFriends().add(user2.getId());
+        user2.getFriends().add(user1.getId());
         userStorage.create(user1);
         userStorage.create(user2);
 
         userService.deleteFriend(user1.getId(), user2.getId());
 
-        assertThat(user1.getFriends()).doesNotContainKey(user2.getId());
-        assertThat(user2.getFriends()).doesNotContainKey(user1.getId());
+        assertThat(user1.getFriends()).doesNotContain(user2.getId());
+        assertThat(user2.getFriends()).doesNotContain(user1.getId());
+    }
+    @Test
+    void test(){
+        assertThat(true).isTrue();
     }
 }

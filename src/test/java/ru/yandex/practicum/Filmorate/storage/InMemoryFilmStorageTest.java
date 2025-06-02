@@ -32,10 +32,10 @@ class InMemoryFilmStorageTest extends FilmorateTests {
         updatedFilm.setName("Updated Film");
         updatedFilm.setDescription("Updated Description");
         updatedFilm.setReleaseDate(LocalDate.of(2001, 1, 1));
-        updatedFilm.setDuration(Duration.ofMinutes(130));
+        updatedFilm.setDuration(130);
 
         assertThatNoException().isThrownBy(() -> filmStorage.update(updatedFilm));
-        assertThat(filmStorage.getFilm(1L).get().getName()).isEqualTo("Updated Film");
+        assertThat(filmStorage.getFilmById(1L).get().getName()).isEqualTo("Updated Film");
     }
 
     @Test
@@ -50,10 +50,10 @@ class InMemoryFilmStorageTest extends FilmorateTests {
 
     @Test
     @DisplayName("Проверка получения существующего фильма по Id.")
-    void getFilmById() {
+    void getFilmByIdById() {
         Film film = createFilm();
         filmStorage.create(film);
-        Film retrievedFilm = filmStorage.getFilm(1L).get();
+        Film retrievedFilm = filmStorage.getFilmById(1L).get();
 
         assertThat(retrievedFilm).isNotNull();
         assertThat(retrievedFilm.getName()).isEqualTo("testName");
@@ -64,7 +64,7 @@ class InMemoryFilmStorageTest extends FilmorateTests {
     void putLike() {
         Film film = createFilm();
         filmStorage.create(film);
-        filmStorage.getFilm(film.getId()).get().putLike(100L);
+        filmStorage.getFilmById(film.getId()).get().putLike(100L);
 
         assertThat(film.getFilmLikes()).contains(100L);
     }
@@ -75,7 +75,7 @@ class InMemoryFilmStorageTest extends FilmorateTests {
         Film film = createFilm();
         filmStorage.create(film);
         film.getFilmLikes().add(100L);
-        filmStorage.getFilm(film.getId()).get().deleteLike(100L);
+        filmStorage.getFilmById(film.getId()).get().deleteLike(100L);
 
         assertThat(film.getFilmLikes()).doesNotContain(100L);
     }

@@ -17,8 +17,8 @@ class UserServiceImplTest extends FilmorateTests {
         User user1 = createUser();
         User user2 = createUser();
         user2.setId(2L);
-        user1.getFriends().put(user2.getId(), FriendStatus.CONFIRMED);
-        user2.getFriends().put(user1.getId(),FriendStatus.CONFIRMED);
+        user1.getFriends().add(user2.getId());
+        user2.getFriends().add(user1.getId());
         userStorage.create(user1);
         userStorage.create(user2);
 
@@ -36,10 +36,10 @@ class UserServiceImplTest extends FilmorateTests {
         user2.setId(2L);
         User user3 = createUser();
         user3.setId(3L);
-        user1.getFriends().put(user2.getId(), FriendStatus.CONFIRMED);
-        user1.getFriends().put(user3.getId(),FriendStatus.CONFIRMED);
-        user2.getFriends().put(user1.getId(),FriendStatus.CONFIRMED);
-        user3.getFriends().put(user1.getId(),FriendStatus.CONFIRMED);
+        user1.getFriends().add(user2.getId());
+        user1.getFriends().add(user3.getId());
+        user2.getFriends().add(user1.getId());
+        user3.getFriends().add(user1.getId());
         userStorage.create(user1);
         userStorage.create(user2);
         userStorage.create(user3);

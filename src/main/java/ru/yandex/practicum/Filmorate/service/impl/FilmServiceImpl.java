@@ -1,19 +1,23 @@
-package ru.yandex.practicum.Filmorate.service;
+package ru.yandex.practicum.Filmorate.service.impl;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.Filmorate.exception.NotFoundException;
 import ru.yandex.practicum.Filmorate.model.Film;
+import ru.yandex.practicum.Filmorate.service.FilmService;
 import ru.yandex.practicum.Filmorate.storage.FilmStorage;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
 public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
+
+    public FilmServiceImpl(@Qualifier(value = "filmDbStorage") FilmStorage filmStorage) {
+        this.filmStorage = filmStorage;
+    }
 
     @Override
     public List<Film> getPopularFilms(int count) {
@@ -24,7 +28,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film getFilm(Long id) {
-        return filmStorage.getFilm(id).orElseThrow(() -> new NotFoundException("Фильм с id " + id + " не найден."));
+        return filmStorage.getFilmById(id).orElseThrow(() -> new NotFoundException("Фильм с id " + id + " не найден."));
     }
 
     @Override

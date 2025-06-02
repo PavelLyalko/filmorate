@@ -1,24 +1,27 @@
-package ru.yandex.practicum.Filmorate.storage;
+package ru.yandex.practicum.Filmorate.storage.impl;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.Filmorate.model.User;
+import ru.yandex.practicum.Filmorate.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Deprecated
 @Component
 public class InMemoryUserStorage implements UserStorage {
     private Map<Long, User> users = new HashMap<>();
 
     @Override
-    public void create(User user) {
+    public User create(User user) {
         users.put(user.getId(), user);
+        return user;
     }
 
     @Override
-    public void update(User updateUser) {
+    public Optional<User> update(User updateUser) {
         User user = users.get(updateUser.getId());
         if (updateUser.getBirthday() != null) {
             user.setBirthday(updateUser.getBirthday());
@@ -32,6 +35,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (updateUser.getLogin() != null) {
             user.setLogin(updateUser.getLogin());
         }
+        return Optional.of(user);
     }
 
     @Override
@@ -40,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> getUser(Long id) {
+    public Optional<User> getUserById(Long id) {
         return Optional.of(users.get(id));
     }
 }

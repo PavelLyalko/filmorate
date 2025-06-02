@@ -1,6 +1,7 @@
 package ru.yandex.practicum.Filmorate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import ru.yandex.practicum.Filmorate.model.Film;
@@ -10,9 +11,7 @@ import ru.yandex.practicum.Filmorate.service.UserService;
 import ru.yandex.practicum.Filmorate.storage.FilmStorage;
 import ru.yandex.practicum.Filmorate.storage.UserStorage;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.HashSet;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -20,8 +19,10 @@ public class FilmorateTests {
     @Autowired
     protected TestRestTemplate restTemplate;
     @Autowired
+    @Qualifier("userDbStorage")
     protected UserStorage userStorage;
     @Autowired
+    @Qualifier("filmDbStorage")
     protected FilmStorage filmStorage;
     @Autowired
     protected FilmService filmService;
@@ -32,7 +33,7 @@ public class FilmorateTests {
         Film film = new Film();
         film.setId(1L);
         film.setDescription("тестофый фильм");
-        film.setDuration(Duration.ofMinutes(120));
+        film.setDuration(120);
         film.setName("testName");
         film.setReleaseDate(LocalDate.of(1991, 2, 1));
         film.setFilmLikes(new HashSet<>());
@@ -47,7 +48,7 @@ public class FilmorateTests {
         user.setLogin("testLogin");
         user.setName("testName");
         user.setBirthday(LocalDate.of(1990, 1, 1));
-        user.setFriends(new HashMap<>());
+        user.setFriends(new HashSet<>());
 
         return user;
     }

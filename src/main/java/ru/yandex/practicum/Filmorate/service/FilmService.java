@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface FilmService {
     List<Film> getPopularFilms(int count);
+
     Film getFilm(Long id);
 
     void create(Film film);

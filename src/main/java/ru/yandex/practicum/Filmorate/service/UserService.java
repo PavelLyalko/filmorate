@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.List;
 
 public interface UserService {
-    void addFriend(Long fromUserId, Long toUserId);
 
     void deleteFriend(Long fromUserId, Long toUserId);
 
@@ -21,4 +20,8 @@ public interface UserService {
     void update(User updateUser);
 
     Collection<User> getUsers();
+
+    void sendFriendRequest(Long userId, Long friendId);
+
+    void confirmFriendship(Long userId, Long friendId);
 }
