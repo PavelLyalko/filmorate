@@ -46,6 +46,7 @@ public class UserController {
 
     @PutMapping
     public User update(@RequestBody User updateUser) {
+        log.info(updateUser.toString());
         userService.update(updateUser);
         log.debug("Пользователь с id {} успешно обновлен", updateUser.getId());
 
@@ -85,5 +86,11 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getEachFriendList(@PathVariable Long id, @PathVariable Long otherId) {
         return userService.getEachFriendList(id, otherId);
+    }
+
+    @DeleteMapping("/clear")
+    public ResponseEntity<String> clearAllUsers() {
+        userService.deleteAllUsers();
+        return ResponseEntity.ok("All users have been deleted successfully.");
     }
 }

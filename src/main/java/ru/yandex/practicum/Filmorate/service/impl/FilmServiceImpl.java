@@ -1,6 +1,6 @@
 package ru.yandex.practicum.Filmorate.service.impl;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.Filmorate.exception.NotFoundException;
 import ru.yandex.practicum.Filmorate.model.Film;
@@ -11,13 +11,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
-
-    public FilmServiceImpl(@Qualifier(value = "filmDbStorage") FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
-    }
 
     @Override
     public List<Film> getPopularFilms(int count) {

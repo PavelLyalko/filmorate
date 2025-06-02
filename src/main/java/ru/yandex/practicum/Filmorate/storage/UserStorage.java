@@ -13,4 +13,6 @@ public interface UserStorage {
     Collection<User> getUsers();
 
     Optional<User> getUserById(Long id);
+
+    void deleteAllUsers();
 }

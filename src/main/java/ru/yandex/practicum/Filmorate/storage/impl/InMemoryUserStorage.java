@@ -47,4 +47,9 @@ public class InMemoryUserStorage implements UserStorage {
     public Optional<User> getUserById(Long id) {
         return Optional.of(users.get(id));
     }
+
+    @Override
+    public void deleteAllUsers() {
+        users.clear();
+    }
 }

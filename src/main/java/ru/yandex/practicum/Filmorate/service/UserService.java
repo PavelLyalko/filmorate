@@ -24,4 +24,6 @@ public interface UserService {
     void sendFriendRequest(Long userId, Long friendId);
 
     void confirmFriendship(Long userId, Long friendId);
+
+    void deleteAllUsers();
 }

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.Filmorate.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+@Primary
 @Repository
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
@@ -54,7 +56,7 @@ public class UserDbStorage implements UserStorage {
         int rows = jdbcTemplate.update(
                 "UPDATE USERS SET email = ?, login = ?, name = ?, birthday = ? WHERE id = ?",
                 updateUser.getEmail(), updateUser.getLogin(), updateUser.getName(),
-                updateUser.getBirthday() != null ? java.sql.Date.valueOf(updateUser.getBirthday()) : null,
+                updateUser.getBirthday() != null ? updateUser.getBirthday() : null,
                 updateUser.getId());
         return rows > 0 ? Optional.of(updateUser) : Optional.empty();
     }
@@ -80,8 +82,13 @@ public class UserDbStorage implements UserStorage {
     }
 
     public boolean existsById(Long id) {
-        String sql = "SELECT COUNT(*) FROM USERS WHERE id = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
-        return count != null && count > 0;
+        String sql = "SELECT name FROM USERS WHERE id = ?";
+        String name = jdbcTemplate.queryForObject(sql, String.class, id);
+        return name != null;
+    }
+
+    @Override
+    public void deleteAllUsers() {
+        jdbcTemplate.update("DELETE FROM USERS");
     }
 }

@@ -1,6 +1,6 @@
 package ru.yandex.practicum.Filmorate.service.impl;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.Filmorate.exception.NotFoundException;
 import ru.yandex.practicum.Filmorate.model.User;
@@ -14,16 +14,12 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
     private final FriendshipDbStorage friendshipDbStorage;
-
-    public UserServiceImpl(@Qualifier("userDbStorage") UserStorage userStorage, FriendshipDbStorage friendshipDbStorage) {
-        this.friendshipDbStorage = friendshipDbStorage;
-        this.userStorage = userStorage;
-    }
 
     @Override
     public void deleteFriend(Long fromUserId, Long toUserId) {
@@ -71,6 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(User updateUser) {
+        checkUserExists(updateUser.getId());
         userStorage.update(updateUser);
     }
 
@@ -98,5 +95,10 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("Заявки нет");
         }
         friendshipDbStorage.confirmFriend(userId, friendId);
+    }
+
+    @Override
+    public void deleteAllUsers() {
+
     }
 }
