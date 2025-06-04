@@ -10,7 +10,7 @@ release_date(date) - дата релиза фильма
 
 duration(int) - продолжительность фильма в минутах
 
-rating(varchar) - возрастной рейтинг фильма
+mpa(varchar) - возрастной рейтинг фильма
 
 1 - G - нет возрастных ограничений.
 2 - PG - рекомендуют смотреть с родителями.
@@ -63,7 +63,7 @@ false - ожидает подтверждения/отклонил
 
 SELECT f.name
 FROM films AS f
-INNER JOIN rating AS r ON r.id = f.rating_id
+INNER JOIN mpa AS r ON r.id = f.rating_id
 WHERE f.name LIKE '%Love%'
 AND r.ratingName = 'R';
 

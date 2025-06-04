@@ -4,8 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
@@ -16,10 +17,10 @@ public class Film {
     @Size(max = 200, message = "Максимальная длина описания — 200 символов")
     private String description;
     private LocalDate releaseDate;
-    private Duration duration;
-    private Set<Long> filmLikes;
-    private Set<String> genre;
-    private String rating;
+    private Integer duration;
+    private Set<Long> filmLikes = new HashSet<>();
+    private Set<Genre> genres = new LinkedHashSet<>();
+    private Mpa mpa;
 
     public void putLike(Long userId) {
         this.filmLikes.add(userId);
