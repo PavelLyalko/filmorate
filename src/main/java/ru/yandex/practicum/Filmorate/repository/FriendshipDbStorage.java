@@ -3,6 +3,7 @@ package ru.yandex.practicum.Filmorate.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.Filmorate.exception.FriendsUpdateException;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -59,8 +60,10 @@ public class FriendshipDbStorage {
     }
 
     public void addFriend(Long userId, Long friendId) {
-        if (!userExists(userId) || !userExists(friendId)) {
-            throw new IllegalArgumentException("Пользователь не найден");
+        boolean exists = !userExists(userId);
+        if (exists || !userExists(friendId)) {
+            Long id = exists ? userId : friendId;
+            throw new IllegalArgumentException(String.format("Пользователь c id: %d не найден", id));
         }
         if (existsFriendship(userId, friendId)) {
             throw new IllegalStateException("Заявка или дружба уже существует");
@@ -68,7 +71,7 @@ public class FriendshipDbStorage {
         String sql = "INSERT INTO FRIENDS (user_id, friend_id, status, request_time) VALUES (?, ?, 'PENDING', ?)";
         int updated = jdbcTemplate.update(sql, userId, friendId, Timestamp.valueOf(LocalDateTime.now()));
         if (updated == 0) {
-            throw new RuntimeException("Не удалось добавить заявку в друзья");
+            throw new FriendsUpdateException("Не удалось добавить заявку в друзья");
         }
     }
 
@@ -82,7 +85,7 @@ public class FriendshipDbStorage {
         String updateSql = "UPDATE FRIENDS SET status = 'CONFIRMED', request_time = ? WHERE user_id = ? AND friend_id = ?";
         int updated = jdbcTemplate.update(updateSql, Timestamp.valueOf(LocalDateTime.now()), friendId, userId);
         if (updated == 0) {
-            throw new RuntimeException("Не удалось подтвердить заявку");
+            throw new FriendsUpdateException("Не удалось подтвердить заявку");
         }
 
     }

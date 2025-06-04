@@ -10,11 +10,4 @@ public class Friendship {
     private Long friendId;
     private String status;
     private LocalDateTime requestTime;
-
-    public Friendship(Long userId, Long friendId, String status, LocalDateTime requestTime) {
-        this.userId = userId;
-        this.friendId = friendId;
-        this.status = status;
-        this.requestTime = requestTime;
-    }
 }

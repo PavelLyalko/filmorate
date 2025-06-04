@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllFriends(Long id) {
-        Set<Long> friendIds = userStorage.getUserById(id).get().getFriends();
+        Set<Long> friendIds = userStorage.getUserById(id).orElseThrow(() -> new NotFoundException("Не найден пользователь с Id: " + id)).getFriends();
         Collection<User> users = userStorage.getUsers();
 
         return users.stream()
@@ -46,14 +46,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getEachFriendList(Long fromUserId, Long toUserId) {
-        User fromUser = userStorage.getUserById(fromUserId).get();
-        User toUser = userStorage.getUserById(toUserId).get();
+        User fromUser = userStorage.getUserById(fromUserId).orElseThrow(() -> new NotFoundException("Не найден пользователь с Id: " + fromUserId));
+        User toUser = userStorage.getUserById(toUserId).orElseThrow(() -> new NotFoundException("Не найден пользователь с Id: " + toUserId));
         Set<Long> fromUserFriend = fromUser.getFriends();
         Set<Long> toUserFriend = toUser.getFriends();
 
         return fromUserFriend.stream()
                 .filter(toUserFriend::contains)
-                .map(user -> userStorage.getUserById(user).get())
+                .map(id -> userStorage.getUserById(id).orElseThrow(() -> new NotFoundException("Не найден пользователь с Id: " + id)))
                 .collect(Collectors.toList());
     }
 
