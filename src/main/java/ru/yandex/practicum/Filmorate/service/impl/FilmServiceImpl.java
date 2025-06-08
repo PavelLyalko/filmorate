@@ -1,9 +1,10 @@
-package ru.yandex.practicum.Filmorate.service;
+package ru.yandex.practicum.Filmorate.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.Filmorate.exception.NotFoundException;
 import ru.yandex.practicum.Filmorate.model.Film;
+import ru.yandex.practicum.Filmorate.service.FilmService;
 import ru.yandex.practicum.Filmorate.storage.FilmStorage;
 
 import java.util.Collection;
@@ -24,7 +25,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film getFilm(Long id) {
-        return filmStorage.getFilm(id).orElseThrow(() -> new NotFoundException("Фильм с id " + id + " не найден."));
+        return filmStorage.getFilmById(id).orElseThrow(() -> new NotFoundException("Фильм с id " + id + " не найден."));
     }
 
     @Override
